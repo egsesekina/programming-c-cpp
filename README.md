@@ -81,4 +81,4 @@ cd programming-c-cpp
 - Официальная документация C++: https://en.cppreference.com/
 - Документация GCC: https://gcc.gnu.org/
 - Документация Git: https://git-scm.com/doc
-- Страница учебной дисциплины: [https://nnov.hse.ru/ba/cst/courses/1163584368.html]
+- Страница учебной дисциплины: https://nnov.hse.ru/ba/cst/courses/1163584368.html
