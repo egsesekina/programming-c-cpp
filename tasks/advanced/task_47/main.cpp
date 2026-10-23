@@ -1,3 +1,9 @@
+/*
+ * Задание 47. Найти кратчайшие расстояния алгоритмом Дейкстры.
+ * Ввод: N M, M рёбер u v w и исходная вершина; веса неотрицательны.
+ * Вывод: расстояние до каждой вершины или unreachable.
+ * Пример: 3 2 / 0 1 4 / 1 2 5 / 0 -> 0:0, 1:4, 2:9.
+ */
 #include <functional>
 #include <iostream>
 #include <limits>
@@ -9,13 +15,18 @@ using namespace std;
 
 int main() {
     int n, m;
-    if (!(cin >> n >> m) || n <= 0 || m < 0) return 1;
+    if (!(cin >> n >> m) || n <= 0 || n > 100000 ||
+        m < 0 || m > 300000) {
+        cerr << "Error\n";
+        return 1;
+    }
 
     vector<vector<pair<int, int>>> graph(n);
     for (int i = 0; i < m; ++i) {
         int u, v, w;
         if (!(cin >> u >> v >> w) ||
-            u < 0 || u >= n || v < 0 || v >= n || w < 0) {
+            u < 0 || u >= n || v < 0 || v >= n || w < 0 || w > 1000000000) {
+            cerr << "Error\n";
             return 1;
         }
         graph[u].push_back({v, w});
@@ -23,7 +34,10 @@ int main() {
     }
 
     int source;
-    if (!(cin >> source) || source < 0 || source >= n) return 1;
+    if (!(cin >> source) || source < 0 || source >= n) {
+        cerr << "Error\n";
+        return 1;
+    }
 
     const long long INF = numeric_limits<long long>::max() / 4;
     vector<long long> dist(n, INF);
