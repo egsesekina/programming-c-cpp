@@ -1,3 +1,10 @@
+/*
+ * Задание 46. Реализовать шаблонный стек с const- и non-const-доступом
+ * к вершине и исключениями при обращении к пустому стеку.
+ * Ввод: отсутствует.
+ * Вывод: 20 и 10 на отдельных строках.
+ * Пример запуска: program -> 20 / 10.
+ */
 #include <iostream>
 #include <stdexcept>
 #include <vector>
@@ -21,6 +28,11 @@ public:
 
     // Возвращает верхний элемент по ссылке.
     T& top() {
+        if (data.empty()) throw std::out_of_range("Stack is empty");
+        return data.back();
+    }
+
+    const T& top() const {
         if (data.empty()) throw std::out_of_range("Stack is empty");
         return data.back();
     }
