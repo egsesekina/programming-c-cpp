@@ -1,41 +1,90 @@
-### Задание 23. Множественный выбор
+### Задание 23. Строки в C
 
-**Вопрос.** По номеру месяца от 1 до 12 выведите время года; при неверном номере выведите `Error`.
+**Условие.** Найти первое вхождение подстроки в C-строке средствами библиотеки string.h.
 
-**Правильный ответ:** программа должна выводить результат, соответствующий условию задачи.
+#### Формат входных данных
 
-**Листинг программы:**
+первая строка — текст, вторая — искомая подстрока (UTF-8, до 255 байт).
 
-```cpp
-#include <iostream>
+#### Формат выходных данных
 
-int main() {
-    int month;
-    std::cin >> month;
-    switch (month) {
-        case 12:
-        case 1:
-        case 2:
-            std::cout << "Winter\n";
-            break;
-        case 3:
-        case 4:
-        case 5:
-            std::cout << "Spring\n";
-            break;
-        case 6:
-        case 7:
-        case 8:
-            std::cout << "Summer\n";
-            break;
-        case 9:
-        case 10:
-        case 11:
-            std::cout << "Autumn\n";
-            break;
-        default:
-            std::cout << "Error\n";
+байтовый индекс первого вхождения или -1. Если входные данные нарушают указанный формат или ограничения, программа выводит `Error` в стандартный поток ошибок и завершается с ненулевым кодом.
+
+#### Разбор решения
+
+`fgets` читает строку в массив `char`, `strcspn` удаляет перевод строки, а `strstr` возвращает указатель на первое вхождение. Разность двух указателей внутри одного массива даёт байтовый индекс.
+
+#### Алгоритм
+
+1. считать две строки и удалить переводы строк.
+2. отклонить пустую подстроку.
+3. вызвать `strstr`.
+4. вывести разность указателей либо `-1`.
+
+#### Исходный код
+
+[main.c](main.c)
+
+```c
+/*
+ * Задание 23. Найти первое вхождение подстроки в C-строке средствами
+ * библиотеки string.h.
+ * Ввод: первая строка — текст, вторая — искомая подстрока (UTF-8, до 255 байт).
+ * Вывод: байтовый индекс первого вхождения или -1.
+ * Пример: abracadabra / cada -> 4.
+ */
+#include <stddef.h>
+#include <stdio.h>
+#include <string.h>
+
+enum { BUFFER_SIZE = 256 };
+
+static int read_line(char *buffer, size_t size) {
+    if (fgets(buffer, (int)size, stdin) == NULL) return 0;
+    size_t end = strcspn(buffer, "\r\n");
+    if (buffer[end] == '\0' && end == size - 1) return 0;
+    buffer[end] = '\0';
+    return 1;
+}
+
+int main(void) {
+    char text[BUFFER_SIZE];
+    char pattern[BUFFER_SIZE];
+    if (!read_line(text, sizeof(text)) || !read_line(pattern, sizeof(pattern)) ||
+        pattern[0] == '\0') {
+        fprintf(stderr, "Error\n");
+        return 1;
     }
+
+    const char *position = strstr(text, pattern);
+    printf("%td\n", position == NULL ? (ptrdiff_t)-1 : position - text);
     return 0;
 }
+
+```
+
+#### Пример работы
+
+Ввод:
+
+```text
+abracadabra
+cada
+```
+
+Вывод:
+
+```text
+4
+```
+
+#### Граничные случаи
+
+Индекс измеряется в байтах UTF-8; пустая искомая строка намеренно считается ошибкой.
+
+#### Компиляция и запуск
+
+```bash
+gcc -std=c17 -Wall -Wextra -Wpedantic main.c -o program
+./program
 ```
