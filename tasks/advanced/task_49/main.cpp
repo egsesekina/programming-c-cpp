@@ -1,3 +1,9 @@
+/*
+ * Задание 49. Найти BFS минимальное число шагов в матрице препятствий.
+ * Ввод: R C (1..1000), затем ровно R*C значений 0 или 1.
+ * Вывод: длина пути от (0,0) до (R-1,C-1) либо -1.
+ * Пример: 2 2 / 0 0 / 1 0 -> 2.
+ */
 #include <array>
 #include <iostream>
 #include <queue>
@@ -8,12 +14,19 @@ using namespace std;
 
 int main() {
     int rows, cols;
-    if (!(cin >> rows >> cols) || rows <= 0 || cols <= 0) return 1;
+    if (!(cin >> rows >> cols) || rows <= 0 || rows > 1000 ||
+        cols <= 0 || cols > 1000) {
+        cerr << "Error\n";
+        return 1;
+    }
 
     vector<vector<int>> grid(rows, vector<int>(cols));
     for (auto& row : grid) {
         for (int& cell : row) {
-            if (!(cin >> cell) || (cell != 0 && cell != 1)) return 1;
+            if (!(cin >> cell) || (cell != 0 && cell != 1)) {
+                cerr << "Error\n";
+                return 1;
+            }
         }
     }
 
