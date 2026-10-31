@@ -69,8 +69,8 @@
 programming-c-cpp/
 ├── README.md
 ├── docs/
-│   ├── Otchet_po_proizvodstvennoy_praktike_Sesekina_EG_feedback_v2.docx
-│   └── Otchet_po_proizvodstvennoy_praktike_Sesekina_EG_bez_koda.docx
+│   ├── Otchet_Sesekina_EG.docx
+│   └── Otchet_Sesekina_EG(bez_koda).docx
 └── tasks/
     ├── closed/       # задания 1–4
     ├── combined/     # задания 5–12
