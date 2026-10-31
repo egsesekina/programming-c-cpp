@@ -4,11 +4,11 @@
 
 #### Формат входных данных
 
-отсутствует.
+число операций от 1 до 100000, затем по одной операции в строке: `push X`, `pop`, `top` или `replace X`.
 
 #### Формат выходных данных
 
-20 и 10 на отдельных строках. Если входные данные нарушают указанный формат или ограничения, программа выводит `Error` в стандартный поток ошибок и завершается с ненулевым кодом.
+значение вершины для каждой операции `top`. Если команда неверна, аргумент не читается или операция обращается к пустому стеку, программа выводит `Error` в стандартный поток ошибок и завершается с ненулевым кодом.
 
 #### Разбор решения
 
@@ -16,10 +16,10 @@
 
 #### Алгоритм
 
-1. поместить два значения в стек.
-2. прочитать вершину.
-3. удалить вершину.
-4. снова прочитать вершину.
+1. считать число операций.
+2. для `push` добавить значение, для `pop` удалить вершину.
+3. для `top` прочитать вершину через константную перегрузку.
+4. для `replace` изменить вершину через неконстантную перегрузку.
 
 #### Исходный код
 
@@ -29,12 +29,13 @@
 /*
  * Задание 46. Реализовать шаблонный стек с const- и non-const-доступом
  * к вершине и исключениями при обращении к пустому стеку.
- * Ввод: отсутствует.
- * Вывод: 20 и 10 на отдельных строках.
- * Пример запуска: program -> 20 / 10.
+ * Ввод: число операций, затем push X, pop, top или replace X.
+ * Вывод: значение вершины для каждой операции top.
+ * Пример: push 10 / push 20 / top -> 20.
  */
 #include <iostream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 template <typename T>
@@ -71,12 +72,39 @@ public:
 };
 
 int main() {
+    int operation_count;
+    if (!(std::cin >> operation_count) || operation_count < 1 ||
+        operation_count > 100000) {
+        std::cerr << "Error\n";
+        return 1;
+    }
+
     Stack<int> stack;
-    stack.push(10);
-    stack.push(20);
-    std::cout << stack.top() << '\n'; // 20
-    stack.pop();
-    std::cout << stack.top() << '\n'; // 10
+    try {
+        for (int i = 0; i < operation_count; ++i) {
+            std::string command;
+            if (!(std::cin >> command)) throw std::invalid_argument("Input");
+            if (command == "push") {
+                int value;
+                if (!(std::cin >> value)) throw std::invalid_argument("Input");
+                stack.push(value);
+            } else if (command == "pop") {
+                stack.pop();
+            } else if (command == "top") {
+                const Stack<int>& const_stack = stack;
+                std::cout << const_stack.top() << '\n';
+            } else if (command == "replace") {
+                int value;
+                if (!(std::cin >> value)) throw std::invalid_argument("Input");
+                stack.top() = value;
+            } else {
+                throw std::invalid_argument("Unknown command");
+            }
+        }
+    } catch (const std::exception&) {
+        std::cerr << "Error\n";
+        return 1;
+    }
     return 0;
 }
 
@@ -87,19 +115,25 @@ int main() {
 Ввод:
 
 ```text
-не требуется
+6
+push 10
+push 20
+top
+replace 30
+top
+pop
 ```
 
 Вывод:
 
 ```text
 20
-10
+30
 ```
 
 #### Граничные случаи
 
-`pop` и обе версии `top` выбрасывают `std::out_of_range` для пустого стека.
+`pop`, `top` и `replace` завершаются ошибкой для пустого стека; неизвестные команды и неполные операции также отклоняются.
 
 #### Компиляция и запуск
 

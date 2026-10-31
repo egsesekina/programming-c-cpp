@@ -1,12 +1,13 @@
 /*
  * Задание 46. Реализовать шаблонный стек с const- и non-const-доступом
  * к вершине и исключениями при обращении к пустому стеку.
- * Ввод: отсутствует.
- * Вывод: 20 и 10 на отдельных строках.
- * Пример запуска: program -> 20 / 10.
+ * Ввод: число операций, затем push X, pop, top или replace X.
+ * Вывод: значение вершины для каждой операции top.
+ * Пример: push 10 / push 20 / top -> 20.
  */
 #include <iostream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 template <typename T>
@@ -43,11 +44,38 @@ public:
 };
 
 int main() {
+    int operation_count;
+    if (!(std::cin >> operation_count) || operation_count < 1 ||
+        operation_count > 100000) {
+        std::cerr << "Error\n";
+        return 1;
+    }
+
     Stack<int> stack;
-    stack.push(10);
-    stack.push(20);
-    std::cout << stack.top() << '\n'; // 20
-    stack.pop();
-    std::cout << stack.top() << '\n'; // 10
+    try {
+        for (int i = 0; i < operation_count; ++i) {
+            std::string command;
+            if (!(std::cin >> command)) throw std::invalid_argument("Input");
+            if (command == "push") {
+                int value;
+                if (!(std::cin >> value)) throw std::invalid_argument("Input");
+                stack.push(value);
+            } else if (command == "pop") {
+                stack.pop();
+            } else if (command == "top") {
+                const Stack<int>& const_stack = stack;
+                std::cout << const_stack.top() << '\n';
+            } else if (command == "replace") {
+                int value;
+                if (!(std::cin >> value)) throw std::invalid_argument("Input");
+                stack.top() = value;
+            } else {
+                throw std::invalid_argument("Unknown command");
+            }
+        }
+    } catch (const std::exception&) {
+        std::cerr << "Error\n";
+        return 1;
+    }
     return 0;
 }
