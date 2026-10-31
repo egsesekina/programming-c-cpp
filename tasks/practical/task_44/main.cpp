@@ -1,22 +1,27 @@
 /*
  * Задание 44. Перегрузить функцию maxValue для двух и трёх аргументов.
- * Ввод: отсутствует.
- * Вывод: 7 и 7 на отдельных строках.
- * Пример запуска: program -> 7 / 7.
+ * Ввод: три целых числа.
+ * Вывод: максимум первых двух и максимум всех трёх чисел.
+ * Пример: 4 7 2 -> 7 / 7.
  */
 #include <algorithm>
 #include <iostream>
 
-int maxValue(int a, int b) {
+long long maxValue(long long a, long long b) {
     return a > b ? a : b;
 }
 
-int maxValue(int a, int b, int c) {
+long long maxValue(long long a, long long b, long long c) {
     return std::max(maxValue(a, b), c);
 }
 
 int main() {
-    std::cout << maxValue(4, 7) << '\n';
-    std::cout << maxValue(4, 7, 2) << '\n';
+    long long a, b, c;
+    if (!(std::cin >> a >> b >> c)) {
+        std::cerr << "Error\n";
+        return 1;
+    }
+    std::cout << maxValue(a, b) << '\n';
+    std::cout << maxValue(a, b, c) << '\n';
     return 0;
 }
