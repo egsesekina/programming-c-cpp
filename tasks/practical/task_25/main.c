@@ -16,7 +16,7 @@ typedef enum {
 } ContactType;
 
 typedef union {
-    char phone[TEXT_SIZE];
+    long long phone;
     char email[TEXT_SIZE];
 } Contact;
 
@@ -38,8 +38,6 @@ static int read_line(char *buffer, size_t size) {
 int main(void) {
     Student student;
     int type;
-    char contact_text[TEXT_SIZE];
-
     if (!read_line(student.name, sizeof(student.name)) ||
         scanf("%d %d", &student.grade, &type) != 2 ||
         student.grade < 0 || student.grade > 100 ||
@@ -49,22 +47,26 @@ int main(void) {
     }
     int ch;
     while ((ch = getchar()) != '\n' && ch != EOF) {}
-    if (!read_line(contact_text, sizeof(contact_text))) {
-        fprintf(stderr, "Error\n");
-        return 1;
-    }
-
     student.contact_type = (ContactType)type;
     if (student.contact_type == CONTACT_PHONE) {
-        strcpy(student.contact.phone, contact_text);
+        if (scanf("%lld", &student.contact.phone) != 1 ||
+            student.contact.phone <= 0) {
+            fprintf(stderr, "Error\n");
+            return 1;
+        }
     } else {
-        strcpy(student.contact.email, contact_text);
+        if (!read_line(student.contact.email, sizeof(student.contact.email))) {
+            fprintf(stderr, "Error\n");
+            return 1;
+        }
     }
 
     printf("Name: %s\n", student.name);
     printf("Result: %s\n", student.grade >= 60 ? "PASS" : "FAIL");
-    printf("Contact: %s\n", student.contact_type == CONTACT_PHONE
-                               ? student.contact.phone
-                               : student.contact.email);
+    if (student.contact_type == CONTACT_PHONE) {
+        printf("Contact: %lld\n", student.contact.phone);
+    } else {
+        printf("Contact: %s\n", student.contact.email);
+    }
     return 0;
 }

@@ -4,7 +4,7 @@
 
 #### Формат входных данных
 
-имя; затем оценка 0..100 и тип контакта (1 — телефон, 2 — email);
+имя отдельной строкой; затем оценка 0..100 и тип контакта (1 — телефон, 2 — email); затем контакт отдельной строкой. Телефон задаётся положительным целым числом, email — непустой строкой длиной до 127 байт.
 
 #### Формат выходных данных
 
@@ -12,13 +12,13 @@
 
 #### Разбор решения
 
-`struct` объединяет поля записи, `enum` ограничивает варианты типа контакта, а `union` хранит только один из двух вариантов контакта. Активное поле объединения выбирается значением перечисления.
+`struct` объединяет поля записи, `enum` ограничивает варианты типа контакта, а `union` хранит только один из двух вариантов: телефон типа `long long` или email типа `char[128]`. Поля разных типов показывают, что члены объединения используют одну область памяти. Активное поле выбирается значением перечисления.
 
 #### Алгоритм
 
 1. считать и проверить имя, оценку и тип контакта.
-2. считать контакт.
-3. записать его в активное поле `union`.
+2. в зависимости от типа считать числовой телефон или строковый email.
+3. записать значение в соответствующее активное поле `union`.
 4. вывести запись и результат обучения.
 
 #### Исходный код
@@ -44,7 +44,7 @@ typedef enum {
 } ContactType;
 
 typedef union {
-    char phone[TEXT_SIZE];
+    long long phone;
     char email[TEXT_SIZE];
 } Contact;
 
@@ -66,8 +66,6 @@ static int read_line(char *buffer, size_t size) {
 int main(void) {
     Student student;
     int type;
-    char contact_text[TEXT_SIZE];
-
     if (!read_line(student.name, sizeof(student.name)) ||
         scanf("%d %d", &student.grade, &type) != 2 ||
         student.grade < 0 || student.grade > 100 ||
@@ -77,23 +75,27 @@ int main(void) {
     }
     int ch;
     while ((ch = getchar()) != '\n' && ch != EOF) {}
-    if (!read_line(contact_text, sizeof(contact_text))) {
-        fprintf(stderr, "Error\n");
-        return 1;
-    }
-
     student.contact_type = (ContactType)type;
     if (student.contact_type == CONTACT_PHONE) {
-        strcpy(student.contact.phone, contact_text);
+        if (scanf("%lld", &student.contact.phone) != 1 ||
+            student.contact.phone <= 0) {
+            fprintf(stderr, "Error\n");
+            return 1;
+        }
     } else {
-        strcpy(student.contact.email, contact_text);
+        if (!read_line(student.contact.email, sizeof(student.contact.email))) {
+            fprintf(stderr, "Error\n");
+            return 1;
+        }
     }
 
     printf("Name: %s\n", student.name);
     printf("Result: %s\n", student.grade >= 60 ? "PASS" : "FAIL");
-    printf("Contact: %s\n", student.contact_type == CONTACT_PHONE
-                               ? student.contact.phone
-                               : student.contact.email);
+    if (student.contact_type == CONTACT_PHONE) {
+        printf("Contact: %lld\n", student.contact.phone);
+    } else {
+        printf("Contact: %s\n", student.contact.email);
+    }
     return 0;
 }
 
@@ -119,7 +121,7 @@ Contact: anna@example.org
 
 #### Граничные случаи
 
-Допускается ровно один активный вариант контакта; длинная или пустая строка отклоняется.
+Допускается ровно один активный вариант контакта; неположительный телефон, длинный или пустой email отклоняются.
 
 #### Компиляция и запуск
 
