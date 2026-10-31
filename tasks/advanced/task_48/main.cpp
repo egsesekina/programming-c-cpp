@@ -1,8 +1,8 @@
 /*
  * Задание 48. Вычислить площади фигур через полиморфный интерфейс Shape.
- * Ввод: отсутствует.
- * Вывод: площади прямоугольника 4x5 и круга радиуса 3.
- * Пример запуска: program -> 20.00 / 28.27.
+ * Ввод: ширина и высота прямоугольника, затем радиус круга.
+ * Вывод: площади прямоугольника и круга.
+ * Пример: 4 5 3 -> 20.00 / 28.27.
  */
 #include <cmath>
 #include <iomanip>
@@ -46,16 +46,19 @@ public:
 
 int main() {
     try {
+        double width, height, radius;
+        if (!(std::cin >> width >> height >> radius))
+            throw std::invalid_argument("Input");
         std::vector<std::unique_ptr<Shape>> shapes;
-        shapes.push_back(std::make_unique<Rectangle>(4, 5));
-        shapes.push_back(std::make_unique<Circle>(3));
+        shapes.push_back(std::make_unique<Rectangle>(width, height));
+        shapes.push_back(std::make_unique<Circle>(radius));
 
         std::cout << std::fixed << std::setprecision(2);
         for (const auto& shape : shapes) {
             std::cout << shape->area() << '\n';
         }
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << '\n';
+    } catch (const std::exception&) {
+        std::cerr << "Error\n";
         return 1;
     }
     return 0;
