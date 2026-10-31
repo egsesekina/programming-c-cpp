@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 
-enum { BUFFER_SIZE = 256 };
+enum { BUFFER_SIZE = 257 };
 
 static int read_line(char *buffer, size_t size) {
     if (fgets(buffer, (int)size, stdin) == NULL) return 0;
